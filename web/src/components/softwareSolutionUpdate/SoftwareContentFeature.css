@@ -1,0 +1,80 @@
+.software-content-feature-container{
+        margin: 2rem;  
+
+}
+.software-content-feature {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(50%, 1fr));   
+          color: white;
+          gap: 2rem;
+          width: 90%;
+          margin: 2rem auto;
+        }
+
+ 
+        .software-content-feature-card {
+          width: 70%;
+          height: 130px;
+          background: #222;
+          border: 2px solid white;
+          outline: 3px solid white;
+          outline-offset: 5px;
+          padding: 15px;
+          text-align: center;
+          transition: transform 0.3s ease-in-out;
+        }
+        
+        /* Jo cards pehle se translateX(70px) hain */
+        .software-content-feature-card:nth-child(-n+2),
+        .software-content-feature-card:nth-child(4n+3),
+        .software-content-feature-card:nth-child(4n+4) {
+          transform: translateX(70px);
+        }
+        .software-content-header{
+          text-align: center;
+          font-size: 2rem;
+        }
+        /* Hover hone par baaki cards bhi 70px ho jayein */
+        .software-content-feature:hover .software-content-feature-card:not(:nth-child(-n+2)):not(:nth-child(4n+3)):not(:nth-child(4n+4)) {
+          transform: translateX(70px);
+        }
+        .soft-ware-content-feature-card-subtitle{
+          color: white;
+          font-size: 1.2rem;
+        }
+        @media (max-width: 768px) {
+          .software-content-feature {
+              grid-template-columns: 1fr;
+              width: 69%;
+          }
+      
+        .software-content-feature-card {
+            width: 90%;
+            margin: 0 auto; /* Center align on small screens */
+          }
+        }
+
+        @media (max-width: 480px) {
+          .software-content-feature-card:nth-child(-n+2),
+        .software-content-feature-card:nth-child(4n+3),
+        .software-content-feature-card:nth-child(4n+4) {
+          transform: translateX(10px);
+        }
+        .software-content-header{
+          text-align: center;
+          font-size: 1.5rem;
+        }
+        /* Hover hone par baaki cards bhi 70px ho jayein */
+        .software-content-feature:hover .software-content-feature-card:not(:nth-child(-n+2)):not(:nth-child(4n+3)):not(:nth-child(4n+4)) {
+          transform: translateX(10px);
+        }
+        .software-content-feature {
+          grid-template-columns: 1fr;
+          width: 100%;
+      }
+  
+    .software-content-feature-card {
+        width: 100%;
+       
+      }
+        }

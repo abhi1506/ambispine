@@ -1,0 +1,193 @@
+.spread-pages {
+  margin-top: 4rem;
+  background-color: black;
+}
+
+.spread-hero-section {
+  height: 740px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-img-spread {
+  width: 85%;
+  margin: 1rem auto;
+  height: 600px;
+  min-height: 350px; 
+}
+
+.container-img-spread .spread-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.spread-button-container {
+  background-color: rgb(9, 1, 87);
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 2rem auto;
+  justify-content: space-between; 
+  width: 100%; 
+}
+
+
+.spread-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.spread-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  transition: transform 0.4s ease-out;
+}
+
+.spread-button:active::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+
+.talent-title {
+  padding-left: 8rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align:left;
+  margin-bottom: 2rem;
+  color: #fff;
+}
+
+.talent-section-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 2rem;
+}
+
+.talent-section-card {
+  width: calc(25% - 15px);
+  background-color: rgba(255, 252, 180, 1);
+  color: black;
+  padding: 2rem;
+  max-width: 300px;
+  border-radius: 0px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+
+.talent-section-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-card {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+
+
+.order1 {
+  order: 2;
+}
+
+.order2 {
+  order: 1;
+}
+
+
+@media (max-width: 1280px) {
+  .talent-section-card {
+    width: 48%;
+  }
+  .talent-header {
+    font-size: 2rem;
+  }
+}
+
+/* Tablet View */
+@media (max-width: 1024px) {
+  .talent-section-card {
+    width: 48%;
+  }
+  .order1 {
+    order: 0;
+  }
+  .order2 {
+    order: 1;
+  }
+}
+
+/* Mobile View */
+@media (max-width: 768px) {
+  .spread-hero-section {
+    height: 500px;
+  }
+  
+  .container-img-spread {
+    width: 90%;
+    height: auto;
+    min-height: 250px;
+  }
+
+  .talent-section-card-container {
+    justify-content: center;
+  }
+
+  .talent-section-card {
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+  }
+
+  .spread-button {
+    font-size: 1rem;
+  }
+}
+
+/* Small Mobile View */
+@media (max-width: 480px) {
+  .talent-section {
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .talent-section-card {
+    width: 100%;
+    max-width: 350px;
+    margin: auto;
+  }
+
+  .spread-button {
+    font-size: 0.8rem;
+  }
+
+  .talent-header {
+    font-size: 1.5rem;
+  }
+}

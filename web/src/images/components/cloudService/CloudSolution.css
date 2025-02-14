@@ -1,0 +1,396 @@
+
+.cloud-solution-hero {
+  background: linear-gradient(to bottom right,rgb(59, 3, 61),rgb(255, 30, 169),rgb(20, 1, 20)); /* Smooth diagonal gradient */
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+  border-radius: 10px;
+}
+
+.cloud-solution-hero-content {
+  max-width: 750px;
+}
+
+.cloud-solution-hero-content .img-content-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.img-icon {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+.cloud-solution-hero h1 {
+  font-size: 3.3rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.cloud-solution-hero p {
+  font-size: 1.2rem;
+  margin-top: 15px;
+  line-height: 1.5;
+  color:#fff;
+}
+
+  
+  
+  .cloud-sol-container {
+    padding: 70px 50px;
+    color:#fff;
+    background: linear-gradient(180deg,rgb(8, 3, 31) 0%,rgb(1, 8, 20) 50%, #000000 100%);
+  }
+  
+  
+  .cloud-solutions{
+    text-align:left;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  } .cloud-solutions h1 {
+    font-size: 2.5rem;
+    text-align:left;
+    font-weight:bold;
+    color:#fff;
+    margin-bottom: 50px;
+  }
+  
+  .cards-container-cloud {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .cloud-sol-dice {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 620px;
+    height: 620px;
+  }
+  
+  .card-cloud-sol {
+    background: rgb(29, 6, 158);
+    padding: 10px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    width: 180px;
+    height: 150px;
+    position: absolute;
+    border: 1px solid #fff;
+  }
+  
+  .card-cloud-sol:hover {
+    transform: translateY(-8px); 
+    box-shadow: 0 8px 20px rgba(0, 0, 255, 0.4); 
+    border: 1px solid cyan; 
+  }
+  
+  
+  .card-cloud-sol h3 {
+    font-size: 0.8rem;
+    color: #fff;
+    font-weight:bold;
+  }
+  
+  .card-cloud-sol p {
+    color:rgb(210, 227, 240);
+    font-size: 0.6rem;
+    margin-top: 10px;
+  }
+  
+  .card-cloud-sol.top {
+    top: 79px;
+    left: 20%;
+    transform: translateX(-50%);
+  }
+  
+  .card-cloud-sol.left {
+    top: 72%;
+    left: 30px;
+    transform: translateY(-50%);
+  }
+  
+  .card-cloud-sol.right {
+    top: 25%;
+    right: 30px;
+    transform: translateY(-50%);
+  }
+  
+  .card-cloud-sol.bottom {
+    bottom: 85px;
+    left: 81%;
+    transform: translateX(-50%);
+  }
+  
+  .card-cloud-sol.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    padding: 30px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    margin: 0px; 
+  }
+  
+  
+  /* Benefits Section */
+  .benefits-sol {
+    padding: 50px 40px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+  .benefits-sol-container{
+    max-width:700px;
+  }
+  .benefits-sol h2 {
+    font-size: 2.3rem;
+    margin-bottom: 20px;
+    font-weight:bold;
+  }
+  
+  .benefits-sol p {
+    font-size: 1rem;
+    color: rgb(245, 234, 234);
+  }
+  
+  .benefits-cards-sol {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+    flex-wrap: wrap; 
+    width: 100%; 
+    max-width: 600px; 
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .benefits-cards-colude-sol {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 40px;
+  }
+  
+  .card-colude {
+    background: linear-gradient(135deg, #1e3c72, #2a5298); 
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    width: 220px;
+    height: 160px;
+    position: relative;
+    border: 1px solid transparent;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .card-colude:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.5); 
+    border: 1px solid cyan; 
+  }
+  
+  .card-colude h3 {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .card-colude p {
+    font-size: 0.9rem;
+  }
+  
+  
+  
+  /* Cloud Security Section */
+  .cloud-security {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); 
+    color: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    gap: 40px;
+  }
+  
+  .security-left-content {
+    max-width: 50%;
+    animation: fadeInLeft 0.8s ease-out;
+  }
+  
+  .security-left-content h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .security-left-content p {
+    font-size: 1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    color:#fff;
+  }
+  
+  .security-right-content img {
+    width: 400px;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3);
+    animation: fadeInRight 0.8s ease-out;
+  }
+  
+  @keyframes fadeInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+
+  @media (max-width: 768px) {
+    .cloud-solution-hero {
+        padding: 60px 10px; /* Smaller padding */
+    }
+
+    .cloud-sol-container {
+        padding: 30px 10px;
+    }
+
+    .cards-container-cloud {
+        display: block;
+        text-align: center;
+    }
+
+    .cloud-sol-dice {
+        width: 100%;
+        height: auto;
+    }
+  
+    .cards-container-cloud {
+        flex-direction: column; 
+        align-items: center;
+      }
+    
+      .card-cloud-sol {
+        width: 200px; 
+        height: 200px; 
+        position: relative; 
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        margin-bottom: 15px; 
+      }
+    
+      .card-cloud-sol.top,
+      .card-cloud-sol.left,
+      .card-cloud-sol.right,
+      .card-cloud-sol.bottom {
+        position: relative; 
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        transform: none; 
+      }
+    
+      .card-cloud-sol.center {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        padding: 20px; 
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15); 
+      }
+
+    .benefits-cards-sol {
+        flex-direction: column; /* Stack items */
+        width: 100%;
+    }
+
+    .card-cloud-sol {
+        width: 90%; /* Limit width */
+    }
+
+    .cloud-security {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .security-left-content, .security-right-content {
+      max-width: 100%;
+    }
+  
+    .security-right-content img {
+      width: 100%;
+      max-width: 350px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cloud-solution-hero-content h1 {
+        font-size: 1.5rem; /* Adjust for very small screens */
+    }
+
+    .cloud-solution-hero-content p {
+        font-size: 0.9rem;
+    }
+
+    .card-cloud-sol h3 {
+        font-size: 0.9rem; /* Slightly larger text for readability */
+    }
+
+    .card-cloud-sol p {
+        font-size: 0.7rem;
+    }
+
+    .security-left-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .security-left-content p {
+        font-size: 1rem;
+    }
+
+    .security-right-content img {
+        max-width: 80%; /* Ensure image fits on small screens */
+    }
+}
+  

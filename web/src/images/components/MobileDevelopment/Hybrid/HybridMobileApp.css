@@ -1,0 +1,95 @@
+/* services include */
+.Ios-mobile-aap{
+          background-image: linear-gradient(to bottom, rgb(0, 0, 26) 0%, rgb(0, 0, 26) 40%, rgb(4, 4, 8) 70%, black 100%);
+          margin-top: 4.5rem;
+          /* padding-bottom: 4rem; */
+          /* margin-top: 100px; */
+}
+.custom-iphone-services {
+          border-top-left-radius: 35%;
+          background-color:rgba(255, 255, 255, 1);
+      }
+      
+      .aap-consulting {
+          border-top-right-radius: 35%;
+          /* background-color: rgb(246, 135, 135); */
+          background-color: rgba(255, 149, 35, 1);
+      }
+      
+      .aap-designe {
+          border-bottom-left-radius: 35%;
+          background-color: rgba(255, 149, 35, 1);
+
+      }
+      
+      .aap-testing {
+          border-bottom-right-radius: 35%;
+          background-color:rgba(255, 255, 255, 1);
+
+      }
+
+      .hybrid-second-part{
+        text-align: center;
+        margin-top: 2rem;
+        max-width: 80%;
+        margin: 1rem auto;
+      }
+      .hybrid-second-part-heading{
+        font-size: 3.5rem;
+        color: white;
+        font-weight: 700;
+        margin-bottom: 2rem;
+      }
+      .hybrid-second-part-subtitle{
+        font-size: 1.4rem;
+        color: white;
+      }
+      /* team data manages */
+      .expert-team{
+          margin-left: 0px;
+      }
+      .agile-methodology{
+          margin-left: 60px;
+      }
+      .customer-centric-approch{
+          margin-left: 120px;
+      }
+
+      .cost-effective{
+          margin-left: 180px;
+      }
+      @media (max-width: 768px){
+        .hybrid-second-part-heading{
+            font-size: 2.2rem;
+
+          }
+          .hybrid-second-part-subtitle{
+            font-size: 1.1rem;
+            color: white;
+          }
+      }
+      @media (max-width: 480px){
+        .hybrid-second-part-heading{
+            font-size: 1.5rem;
+
+          }
+          .hybrid-second-part-subtitle{
+            font-size: 0.9rem;
+            color: white;
+          }
+      }
+    @media (max-width: 560px){
+        .expert-team{
+            margin-left: 0px;
+        }
+        .agile-methodology{
+            margin-left: 0px;
+        }
+        .customer-centric-approch{
+            margin-left: 0px;
+        }
+  
+        .cost-effective{
+            margin-left: 0px;
+        }
+    }

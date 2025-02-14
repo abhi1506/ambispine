@@ -1,0 +1,107 @@
+.why-chhose-ambipine-crm-section{
+          text-align: center;
+}
+.why-ch-ambi-crm-sect-head{
+          font-size: 3rem;
+          /* text-align: center; */
+          font-weight: 600;
+          color: white;
+          text-align: center;  
+}
+.why-ch-ambi-crm-sect-subtitle{
+          font-size: 1.1rem;
+          color: white;
+          text-align: center;
+}
+.why-ch-ambi-crm-sect-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px;
+          justify-content: center;
+          max-width: 95%;
+          margin: 3rem auto;
+          padding-top: 2rem;
+      }
+      
+     
+      .why-ch-ambi-crm-sect-card {
+          width: calc(22% - 1rem); /* 3 cards per row */
+          background-color: white;
+          height: 300px;
+          color: rgb(7, 7, 7);
+          padding: 2rem 1rem;
+          margin: 0.5rem;
+          box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+          text-align: center;
+          transition: all 0.2s ease-in-out;
+          
+      }
+      .why-ch-ambi-crm-sect-card:hover{
+          transform: translateY(10px);
+          background-color: rgb(248, 247, 247);
+      }
+      .why-choose-crm-sect-top{
+          margin: 2rem 1rem;
+          padding: 2rem;
+      }
+      .why-ch-ambi-crm-sect-icon{
+          font-size: 2rem;
+          transition: all 0.2s ease-in-out;
+          
+      }
+      .why-ch-ambi-crm-sect-icon:hover{
+          font-size: 2rem;
+          
+      }
+      .why-ch-ambi-crm-sect-header{
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin-top: 1rem;
+      }
+      .why-ch-ambi-crm-sect-subtitle{
+          color: white;
+          font-size:1rem;
+      }
+      .why-ch-ambi-crm-sect-sub-sub{
+          margin-top: 1rem;
+          font-size: 1rem;
+          color: black;
+          
+      }
+      @media (max-width: 1280px){
+          .why-ch-ambi-crm-sect-card {
+                    width: calc(30% - 20px); /* 3 cards per row */   
+                    
+                }
+      }
+      @media (max-width: 1024px){
+        .why-ch-ambi-crm-sect-card {
+            width: calc(40% - 20px); /* 3 cards per row */
+           
+            
+        }
+        .why-ch-ambi-crm-sect-head{
+            font-size: 2.5rem; 
+          
+        }
+      }
+      @media (max-width: 768px){
+          .why-ch-ambi-crm-sect-container {
+          flex-direction: column;
+          }
+          .why-ch-ambi-crm-sect-card {
+                    width: calc(100% - 20px); /* 3 cards per row */    
+            }
+            .why-ch-ambi-crm-sect-head{
+                font-size: 2rem; 
+              
+            }
+
+      }
+      @media (max-width: 480px){
+        .why-ch-ambi-crm-sect-head{
+            font-size: 1.5rem; 
+            margin-bottom: 1.5rem;
+        }
+
+    }

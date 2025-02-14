@@ -1,0 +1,200 @@
+.crm-solution-upates{
+          margin-top: 4.5rem;
+          background-image: linear-gradient(to bottom, rgb(6, 6, 67) 0%, rgb(2, 2, 27) 40%, rgba(16, 10, 10, 0.954) 80%, black 100%);
+}
+.crm-feature-container{
+          padding: 2rem 1rem;
+}
+
+.cmsupdate-feaute-heading{
+          font-size: 3.5rem;
+          text-align: center;
+          font-weight: 600;
+          color: white;
+          text-align: center;
+}
+.crm-feature-solution-container{
+        margin-left: 2rem;
+        padding: 2rem;
+}
+.crm-feature-solution-card{
+          /* width: 100%; */
+          display: flex;
+          /* flex-wrap: wrap; */
+          /* gap: 40px; */
+          align-items: center;
+          /* justify-content: start; */
+          justify-content: space-evenly;
+          margin-bottom: 1rem;
+          color: white;
+          transition: all 0.2s ease-in-out;
+}
+.crm-feature-solution-card:hover{
+        transform: translateY(-10px);
+        background-color: rgb(4, 0, 21);
+}
+.crm-feature-solution-card-imag-container{
+          width: 12%;
+}
+.crm-feauture-solution-img{
+          width: 150px;
+          height: 150px;
+          object-fit: cover;
+}
+.crm-feature-solution-card-content{
+          width: 80%;
+          margin-left: 5%;
+}
+.feature-crm-headtext{
+          font-size: 1.5rem;
+          font-weight:600;
+}
+.feature-crm-subtitle{
+          font-size: 1rem;
+          color: white;
+          font-weight: 100;
+}
+
+
+/* stagitc partership */
+.strategic-parten-ship-container{
+        padding: 2rem;
+        width: 90%;
+        margin: 2rem auto;
+}
+.stategic-header{
+        font-size: 2.8rem;
+        font-weight: 600;
+        color: white;
+        text-align: center;
+}
+.strategic-card-container{
+        display: grid;
+        grid-template-columns: repeat(3, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 2rem;
+        margin: 2rem 1rem;
+
+}
+.sap{
+        background-color: rgba(255,12,12,1);     
+}
+.ora-cle{
+        background-color: rgba(245,148,12,1);       
+
+}
+.net-suite{
+        background-color: rgba(1,35,127,1);
+
+}
+.strategic-card{
+        padding: 1rem 2rem;
+        color: white;
+        text-align: center;
+        /* margin: 1rem; */
+        transform: skewX(15deg);
+        transition: all .2s linear;
+}
+.strategic-card:hover{
+        /* transform: scale(1.4); */
+        /* transform: skewX(20deg); */
+        box-shadow: 10px 10px 5px red;
+
+}
+.strategic-card p{
+        text-align: left;
+        color: white;
+}
+
+@media (max-width: 1280px){
+        .strategic-parten-ship-container {
+                padding: 1rem;
+                width: 95%;
+                margin: auto;
+            }
+            .strategic-card-container {
+                grid-template-columns: repeat(3, minmax(280px, 1fr));
+                padding: 1rem;
+                margin: 1rem;
+            }
+            .strategic-card{
+                padding: 1rem;
+        }
+}
+
+@media (max-width: 1024px){
+        
+
+        .cmsupdate-feaute-heading{
+                font-size: 3rem;
+        }
+        .stategic-header{
+                font-size: 2.5rem;
+        }
+        .strategic-card-container{
+                grid-template-columns: repeat(2, minmax(300px, 1fr));
+                gap: 3rem;
+        }
+        .crm-feature-solution-card-imag-container {
+                width: 24%;
+            }
+}
+
+@media (max-width: 768px){
+        .crm-solution-upates{
+                margin-top: 0rem;               
+      }
+        .crm-feature-solution-card{
+                flex-direction: column;
+        }
+        .crm-feature-solution-card-imag-container{
+                width: 90%;
+                text-align: center;
+      }
+      .crm-feauture-solution-img{
+                width: 100px;
+                height: 100px;
+               
+      }
+      .crm-feature-solution-card-content{
+                width: 90%;
+                margin: 2rem auto;
+      }
+        .strategic-card-container{
+                grid-template-columns: repeat(1, minmax(300px, 1fr));
+                gap: 3rem;
+        }
+        .cmsupdate-feaute-heading{
+                font-size: 2rem;
+        }
+}
+@media (max-width: 480px){
+        .cmsupdate-feaute-heading{
+                font-size: 2rem;
+        }
+        .stategic-header{
+                font-size: 1.5rem;
+        }
+        .strategic-card-container{
+                grid-template-columns: repeat(1, minmax(250px, 1fr));
+                gap: 3rem;
+        }
+        .crm-feature-solution-card-content{
+                width: 100%;
+               
+      }
+      .strategic-card{
+        /* margin: 1rem; */
+        transform: skewX(0deg);
+   }
+   .strategic-parten-ship-container {
+        padding: 0.5rem;
+        width: 100%;
+        margin: auto;
+    }
+      .crm-feature-solution-container {
+        margin-left: 2rem;
+        padding: 0.5rem;
+    }
+        
+}

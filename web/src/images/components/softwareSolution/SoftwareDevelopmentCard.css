@@ -1,0 +1,111 @@
+.soft-dev-process-container{
+  margin: 3rem 2rem;
+  padding: 3rem 2rem;
+}
+.soft-dev-pro-head{
+          font-size: 3rem;
+          font-weight: 700;
+          color: white;
+          text-align: center;
+
+}
+.soft-dev-pro-suv{
+          font-size: 1.1rem;
+          /* font-weight: 700; */
+          color: white;
+          text-align: center ;
+          
+}
+
+.soft-development-section {
+  width: 90%;
+  margin: 2rem auto;
+}
+
+.software-development-card-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: start;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.soft-develop-sec-header {
+  color: white;
+  font-size: 2.5rem;
+  font-weight:600;
+  margin-bottom: 1rem;
+}
+
+.soft-develop-card {
+  border: 2px solid white;
+  outline: 5px solid white;
+  outline-offset: 5px;
+  width: calc(22% - 1rem);
+  margin: 1rem;
+  padding: 1.3rem;
+  color: white;
+  transition: all .2s ease;
+}
+.soft-develop-card:hover{
+  transform: translateY(10px);
+}
+.soft-dev-head{
+  font-size: 1.5rem;
+  font-weight:bold;
+}
+.soft-dev-sub {
+  color: white;
+}
+
+.soft-dev-pro-sub{
+  color: white;
+  text-align: center;
+  padding: 2rem;
+}
+@media (max-width: 1280px) {
+  /* .soft-develop-card {
+            width: calc(30% - 1rem); 
+          } */
+}
+
+@media (max-width: 1024px) {
+  .soft-develop-card {
+    width: calc(45% - 1rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .software-development-card-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .soft-develop-card {
+    width: calc(80% - 2rem);
+  }
+  .soft-development-section {
+    /* width: 100%; */
+    margin: 1rem;
+  }
+  .soft-develop-sec-header {
+    /* font-size: 1.5rem; */
+    margin-left: 50px;
+  }
+  .soft-dev-pro-head{
+          font-size: 2.5rem;
+          
+
+}
+.soft-dev-pro-suv{
+          font-size: 1rem;
+          
+}
+}
+
+@media (max-width:480px) {
+          .soft-dev-pro-head{
+                    font-size: 2rem;
+                    
+          
+          }
+}

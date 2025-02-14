@@ -1,0 +1,216 @@
+.spread-second-section,
+.spread-third-section {
+    max-width: 90%;
+    margin: 2rem auto;
+    display: flex;
+    gap: 20px;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+    padding: 2rem 0;
+    background-color: transparent;
+}
+
+.spread-second-section-left,
+.spread-third-section-left {
+    width: 45%;
+}
+
+.spread-second-section-header {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 1rem 0;
+}
+
+.second-section-button-container {
+    text-align: right;
+    margin: 1rem;
+}
+
+.second-section-button {
+    background-image: linear-gradient(rgb(251,130,229), rgb(255,3,96));
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.spread-second-section-right,
+.spread-third-section-right {
+    width: 35%;
+    position: relative;
+}
+
+.spread-second-right-img-container {
+    width: 100%;
+    height: 100%;
+}
+
+.spread-second-right-img {
+    width: 100%;
+    max-width: 423px;
+    max-height: 446px;
+    margin: 1rem auto;
+    height: auto;
+}
+
+.spread-text {
+    color: rgb(135, 69, 197);
+}
+
+.spread-second-section-subtitle {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.spread-third-section-right-1 {
+    width: 180px;
+    height: 200px;
+    transform: translate(-100%, 15%);
+    margin: 1rem;
+    object-fit: cover;
+}
+
+.spread-third-section-right-2 {
+    width: 330px;
+    height: 388px;
+    object-fit: cover;
+    transform: translate(20%, -20px);
+}
+
+/* Responsive Styles */
+@media (max-width: 1280px) {
+    .spread-third-section-right-1 {
+        width: 160px;
+        height: 180px;
+        transform: translate(-50%, 15%);
+    }
+
+    .spread-third-section-right-2 {
+        width: 300px;
+        height: 370px;
+        transform: translate(20%, 20px);
+    }
+}
+
+@media (max-width: 990px) {
+    .spread-second-section,
+    .spread-third-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .spread-second-section-header {
+        font-size: 3rem;
+    }
+
+    .spread-second-section-right,
+    .spread-third-section-right {
+        width: 100%;
+    }
+
+    .spread-second-section-left,
+    .spread-third-section-left {
+        width: 100%;
+    }
+
+    .spread-second-right-img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .second-section-button-container {
+        text-align: left;
+    }
+
+    .spread-third-section-right-1 {
+        width: 160px;
+        height: 180px;
+        transform: translate(25%, -25%);
+    }
+
+    .spread-third-section-right-2 {
+        width: 300px;
+        height: 370px;
+        transform: translate(40%, 50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .spread-second-section-header {
+        font-size: 2.5rem;
+    }
+
+    .spread-third-section-right-2 {
+        width: 300px;
+        height: 370px;
+        transform: translate(30%, 0%);
+    }
+}
+
+@media (max-width: 480px) {
+    .spread-second-section-header {
+        font-size: 2rem;
+    }
+
+    .spread-third-section-right-1 {
+        transform: translate(10px, 10px);
+    }
+
+    .spread-third-section-right-2 {
+        width: 100%;
+        height: 370px;
+        transform: translate(10px, 10px);
+    }
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.spread-second-section,
+.spread-third-section {
+    animation: fadeIn 1s ease-in-out;
+}
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.spread-second-right-img,
+.spread-third-section-right-1,
+.spread-third-section-right-2 {
+    animation: slideIn 1s ease-in-out;
+}
+.second-section-button {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.second-section-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 5px 15px rgba(255, 3, 96, 0.5);
+}
+.spread-second-section {
+    animation: fadeIn 1s ease-in-out 0.2s backwards;
+}
+.spread-third-section {
+    animation: fadeIn 1s ease-in-out 0.5s backwards;
+}
+.spread-second-right-img {
+    animation: slideIn 1s ease-in-out 0.7s backwards;
+}

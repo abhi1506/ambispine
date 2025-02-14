@@ -1,0 +1,146 @@
+/* Main Section */
+.seo-process {
+    padding: 2rem 1rem;
+  }
+  
+  /* Section Heading */
+  .seo-process h1 {
+    text-align: center;
+    color: #343a40;
+    margin-bottom: 2rem;
+  }
+  
+  /* Container for Left, Middle, and Right Columns */
+  .seo-process-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Distributes items with space between them */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+  .seo-process-left,
+  .seo-process-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    margin: 0 10px;
+  }
+  
+  .seo-step-box-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    position: relative;
+    width: 100%;
+    max-width: 250px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Hover Effect on Step Box */
+  .seo-step-box-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* SEO Step Text */
+  .seo-step-box-card-body h5 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-align: center;
+    color: #343a40;
+  }
+  
+  .seo-step-number-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    color: #fff;
+    position: absolute;
+    font-size: 1.25rem;
+    font-weight: bold;
+    width: 40px;
+    height: 40px;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+  }
+  
+  .seo-step-number-circle-left {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    color: #fff;
+    position: absolute;
+    font-size: 1.25rem;
+    font-weight: bold;
+    width: 40px;
+    height: 40px;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+  }
+  
+  /* Middle Circle Styling */
+  .seo-process-middle-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background-color: #007bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  /* Text inside middle circle */
+  .seo-process-middle-circle h3 {
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.2rem;
+    margin: 0;
+    padding: 0 0.5rem;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .seo-process-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .seo-process-left,
+    .seo-process-right {
+      width: 100%;
+      padding: 0 20px;
+    }
+  
+    .seo-process-middle-circle {
+      margin: 1rem 0;
+    }
+  
+    .seo-step-box-card {
+      max-width: 100%;
+    }
+  
+    .seo-step-number-circle, .seo-step-number-circle-left {
+      font-size: 1rem;
+      width: 35px;
+      height: 35px;
+    }
+  }
+  

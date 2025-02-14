@@ -1,0 +1,89 @@
+.soft-product-section{
+          background-color: rgb(28, 27, 27);
+          
+}
+.soft-product-container{
+          width: 90%;
+          /* margin: 1rem auto; */
+          margin: auto;
+          padding: 1rem;
+}
+.soft-product-sect-top{
+          text-align: center;
+          padding: 2rem 3rem;
+          
+}
+.soft-product-sect-top h1{
+          font-size: 3rem;
+          color: white;
+          font-weight: 700;
+}
+.soft-product-sect-top p{
+          font-size: 1.2rem;
+          color: white;
+          margin-top: 1rem;
+}
+.soft-ware-produt-title{
+          font-size: 1.7rem;
+          color: rgba(255, 255, 255, 0.986);
+          font: 700;
+}
+.soft-prouct-sec-body{
+          display: flex;
+          gap: 20px;
+          flex-wrap: wrap;
+          justify-content: start;
+}
+
+.soft-product-sec-card{
+          width: calc(16% - 0.3rem);
+          margin: 2rem 1rem;
+}
+.soft-product-card-name{
+          color: white;
+          font-size: 1.4rem;
+          font-weight:600;
+}
+.soft-product-card-title{
+          color: rgb(206, 201, 201);
+          font-size: 1rem;
+}
+@media (max-width: 1024px){
+          .soft-product-sec-card{
+                    width: 40%;
+          }
+          .soft-product-sect-top h1 {
+                    font-size: 2.5rem;
+
+                }
+}
+
+@media (max-width: 768px){
+   
+.soft-product-sect-top{
+          text-align: left;
+          padding: 2rem 1rem;
+          
+}
+.soft-product-sec-card{
+          width: 100%;
+}
+.soft-product-sec-card:hover {
+    background-color: rgba(0, 0, 0, 0.1); 
+}
+.soft-product-sect-top h1{
+          font-size: 2rem;
+          
+}
+.soft-product-sect-top p{
+          font-size: 1rem;
+}
+.soft-ware-produt-title{
+          font-size: 1.4rem;
+          
+}       
+}
+
+@media (max-width: 480px){
+       
+}

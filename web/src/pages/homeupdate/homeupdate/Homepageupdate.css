@@ -1,0 +1,16 @@
+.home-page-update{
+          margin-top: 4rem;
+          background-image: linear-gradient(to bottom, rgb(0, 0, 26) 0%, rgb(0, 0, 26) 40%, rgb(4, 4, 8) 70%, black 100%);
+}
+.home-button{
+          background-color: transparent;
+          border: 1px solid white;
+
+}
+.home-button:hover{
+          background-color: transparent;
+          text-decoration: none;
+}
+.cloud-home-sectoin{
+          /* margin: 2rem; */
+}

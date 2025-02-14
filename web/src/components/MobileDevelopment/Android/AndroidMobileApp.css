@@ -1,0 +1,84 @@
+.android-mobile-app {
+    background-image: linear-gradient(to bottom, rgb(0, 0, 26) 0%, rgb(0, 0, 26) 40%, rgb(4, 4, 8) 70%, black 100%);
+    margin-top: 4.5rem;
+}
+
+/* Android App Service Cards */
+
+.custom-android-services {
+    border-top-left-radius: 35%;
+    background-color:rgba(255, 255, 255, 1);
+    transition: all .2s ease-in-out;
+}
+ .android-app-consulting {
+    border-top-right-radius: 35%;
+    /* background-color: rgb(246, 135, 135); */
+    background-color: rgba(76, 76, 78, 1);
+  transition: all .2s ease-in-out;
+
+}
+ .android-app-design {
+    border-bottom-left-radius: 35%;
+    background-color: rgba(76, 76, 78, 1);
+
+}
+ .android-app-design:hover,
+ .android-app-consulting:hover{
+  background-color: rgb(2, 34, 60);
+  color: white;
+  transform: scale(1.04);
+  transition: all .2s ease-in-out;
+}
+ .android-app-testing {
+    border-bottom-right-radius: 35%;
+    background-color:rgba(255, 255, 255, 1);
+    transition: all .2s ease-in-out;
+}
+
+ .android-app-testing:hover,
+ .custom-android-services:hover {
+  background-color: rgb(27, 75, 187);
+  color: white;
+  transform: scale(1.04);
+}
+
+/* Why Choose Us - Android Section */
+.expert-android-team {
+    margin-left: 0px;
+}
+
+.android-agile-methodology {
+    margin-left: 60px;
+}
+
+.android-user-centric {
+    margin-left: 120px;
+}
+
+.android-cost-effective {
+    margin-left: 180px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .android-agile-methodology {
+        margin-left: 40px;
+    }
+
+    .android-user-centric {
+        margin-left: 80px;
+    }
+
+    .android-cost-effective {
+        margin-left: 120px;
+    }
+}
+
+@media (max-width: 560px) {
+    .android-agile-methodology,
+    .android-user-centric,
+    .android-cost-effective {
+        margin-left: 0px;
+    }
+}
+
