@@ -11,43 +11,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
         working-directory: web
 
-      # 4️⃣ Build React app
       - name: Build React app
         run: npm run build
         working-directory: web
 
-      # 4.1️⃣ Debug: List files
-      - name: List web folder
-        run: ls -R web
-
-      # 5️⃣ Commit and push build folder if it exists
       - name: Commit and push build folder
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ -d "web/build" ]; then
-            echo "Build folder exists. Committing..."
-            git config user.name "abhi1506"
-            git config user.email "abhisheksingh200515@gmail.com"
-            git add web/build/**
-            git diff --quiet && echo "No changes to commit" || git commit -m "chore: update build folder [skip ci]"
-            git push origin main
-          else
-            echo "No build folder found. Skipping commit."
-          fi
+          cd web
+          git config user.name "abhi1506"
+          git config user.email "abhisheksingh200515@gmail.com"
+          git add build/**
+          git diff --quiet || git commit -m "chore: update build folder [skip ci]"
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
 
