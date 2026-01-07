@@ -14,26 +14,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repo with full history (required for push)
       - name: Checkout code with full history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: true
 
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
+      # Install dependencies
       - name: Install dependencies
         working-directory: web
         run: npm install
 
-      - name: Build React app
+      # Build project
+      - name: Build React/Vite app
         working-directory: web
         run: npm run build
 
-      - name: Commit & push build folder
+      # Commit build or dist folder
+      - name: Commit & push build artifacts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -41,7 +46,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add build
+          # Detect build or dist
+          if [ -d "build" ]; then
+            TARGET="build"
+          elif [ -d "dist" ]; then
+            TARGET="dist"
+          else
+            echo "❌ No build/dist folder found. Build failed or incorrect script."
+            exit 0
+          fi
 
-          git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
+          echo "📁 Found $TARGET folder, committing..."
+
+          git add $TARGET
+          git diff --cached --quiet || git commit -m "chore: update $TARGET folder [skip ci]"
           git push
