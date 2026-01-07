@@ -6,12 +6,15 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           persist-credentials: false
@@ -29,14 +32,15 @@ jobs:
         run: npm run build
         working-directory: web
 
-      - name: Commit and push build folder
+      - name: Commit & push build folder
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd web
           git config user.name "abhi1506"
           git config user.email "abhisheksingh200515@gmail.com"
-          git add build/**
-          git diff --quiet || git commit -m "chore: update build folder [skip ci]"
+          # Add build folder from repo root
+          git add web/build/**
+          # Commit only if changes exist
+          git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
+          # Push using GITHUB_TOKEN
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
-
