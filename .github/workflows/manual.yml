@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repo with full history
       - name: Checkout code with full history
         uses: actions/checkout@v4
         with:
@@ -25,31 +24,34 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: Install dependencies
         working-directory: web
         run: npm install
+
       - name: Build React/Vite app
         working-directory: web
         run: npm run build
+
       - name: Commit & push build artifacts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd web
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "abhi1506"
+          git config user.email "abhisheksingh200515@gmail.com"
 
-          # Detect build or dist
+          # Detect build/dist folder
           if [ -d "build" ]; then
             TARGET="build"
           elif [ -d "dist" ]; then
             TARGET="dist"
           else
-            echo "No build/dist folder found. Build failed or incorrect script."
+            echo  "No build/dist folder found — skipping commit"
             exit 0
           fi
 
-          echo "Found $TARGET folder, committing..."
+          echo "Found $TARGET folder, committing…"
 
           git add $TARGET
           git diff --cached --quiet || git commit -m "chore: update $TARGET folder [skip ci]"
