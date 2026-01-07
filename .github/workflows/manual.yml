@@ -1,79 +1,54 @@
-name: Build, Commit and Download React Build
+name: Build, Commit & Download (Node 22)
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: write  # Needed to push back to repo
+  contents: write
 
 jobs:
-  build-app:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
 
-      # 2️⃣ Setup Node automatically — Node 18
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         working-directory: web
-        run: npm install
+        run: npm install --legacy-peer-deps
 
-      # 4️⃣ Remove previous build just in case
-      - name: Clean previous build
+      - name: Patch CRA for Node 22
+        working-directory: web
+        run: npm install react-scripts@5 --legacy-peer-deps
+
+      - name: Clean build
         working-directory: web
         run: rm -rf build || true
 
-      # 5️⃣ Build the React app
-      - name: Build React app
+      - name: Build React
         working-directory: web
-        run: npm run build
+        run: npm run build --verbose
 
-      # 6️⃣ Verify build exists
-      - name: Confirm build folder
-        working-directory: web
-        run: |
-          if [ ! -d "build" ]; then
-            echo "❌ Build failed"
-            exit 1
-          fi
-          echo "✅ Build complete"
-          ls -l build
-
-      # 7️⃣ Upload build folder as downloadable artifact
-      - name: Upload build artifact (manual access)
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: react-build
           path: web/build
 
-      # 8️⃣ Commit & push to repo
-      - name: Commit & push build folder
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit & push
+        env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
         run: |
           git config user.name "abhi1506"
           git config user.email "abhisheksingh200515@gmail.com"
-
           cd web
-
           git add -f build
-
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "chore: update build folder [skip ci]"
+          git diff --cached --quiet || {
+            git commit -m "chore: update build [skip ci]"
             git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
-          fi
+          }
