@@ -1,66 +1,47 @@
-name: Build and Commit React Build
+name: Build & Commit Web Build
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
-
-permissions:
-  contents: write  # Needed to push back to repo
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          persist-credentials: false
 
-      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         working-directory: web
         run: npm install
 
-      # 4️⃣ Build React app
-      - name: Build React app
+      - name: Build project
         working-directory: web
         run: npm run build
 
-      # 5️⃣ Debug — confirm build folder exists
-      - name: List web folder
-        run: ls -R web
-
-      # 6️⃣ Commit & push build folder
-      - name: Commit & push build folder
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit build file
         run: |
           git config user.name "abhi1506"
           git config user.email "abhisheksingh200515@gmail.com"
-          
-          # Make sure build folder exists
-          if [ -d "web/build" ]; then
-            echo "Build folder exists — committing..."
-            
-            # Force add even if gitignore ignores it
-            git add -f web/build/**
 
-            # Commit only if there are changes
-            git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
+          BUILD_DIR="web/build"
 
-            # Push to the same branch using GITHUB_TOKEN
+          if [ -d "$BUILD_DIR" ]; then
+            echo "Build folder found — committing..."
+
+            git add -f "$BUILD_DIR"
+            git diff --cached --quiet || git commit -m "chore: update build [skip ci]"
             git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
           else
-            echo "No build folder found — cannot commit"
-            exit 1  # Fail workflow if build is missing
+            echo "❌ Build folder not found — stopping"
+            exit 1
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
