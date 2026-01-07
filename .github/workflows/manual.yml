@@ -3,19 +3,19 @@ name: Build and Commit React Build
 on:
   push:
     branches:
-      - main   # Trigger on push to main branch
-  workflow_dispatch:   # Allows manual run from GitHub UI
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
+      # 1️⃣ Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: false  # We'll use GITHUB_TOKEN for push
+          persist-credentials: false  # We'll use GITHUB_TOKEN to push
 
       # 2️⃣ Setup Node.js
       - name: Setup Node.js
@@ -23,22 +23,26 @@ jobs:
         with:
           node-version: 22
 
-      # 3️⃣ Install dependencies
+      # 3️⃣ Install dependencies (inside web folder)
       - name: Install dependencies
+        working-directory: web
         run: npm install
 
       # 4️⃣ Build React app
       - name: Build React app
+        working-directory: web
         run: npm run build
 
       # 5️⃣ Commit and push build folder
-      - name: Commit and push build
+      - name: Commit and push build folder
+        working-directory: web
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update build folder [skip ci]"
           branch: main
-          file_pattern: build/**    # Include all nested files
-          add: "build/**"           # Stage all build files
+          file_pattern: build/**    # Include all files inside build
+          add: "build/**"
           commit_user_name: abhi1506
           commit_user_email: abhisheksingh200515@gmail.com
           push: true
+
