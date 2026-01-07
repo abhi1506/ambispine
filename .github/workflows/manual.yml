@@ -1,4 +1,4 @@
-name: Build and Commit React Build
+name: Build, Commit and Download React Build
 
 on:
   push:
@@ -10,45 +10,56 @@ permissions:
   contents: write  # Needed to push back to repo
 
 jobs:
-  build:
+  build-app:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
+      # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      # 2️⃣ Setup Node.js
+      # 2️⃣ Setup Node automatically — Node 18
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 18
 
       # 3️⃣ Install dependencies
       - name: Install dependencies
         working-directory: web
         run: npm install
 
-      # 4️⃣ Build React app
+      # 4️⃣ Remove previous build just in case
+      - name: Clean previous build
+        working-directory: web
+        run: rm -rf build || true
+
+      # 5️⃣ Build the React app
       - name: Build React app
         working-directory: web
-        run: |
-          echo "Building React app..."
-          npm run build || true  # Don't stop workflow, we will handle missing folder
+        run: npm run build
 
-      # 5️⃣ Ensure build folder exists
-      - name: Ensure build folder exists
+      # 6️⃣ Verify build exists
+      - name: Confirm build folder
         working-directory: web
         run: |
           if [ ! -d "build" ]; then
-            echo "Build folder missing — creating empty folder to avoid errors"
-            mkdir -p build
+            echo "❌ Build failed"
+            exit 1
           fi
+          echo "✅ Build complete"
           ls -l build
 
-      # 6️⃣ Commit & push build folder
+      # 7️⃣ Upload build folder as downloadable artifact
+      - name: Upload build artifact (manual access)
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-build
+          path: web/build
+
+      # 8️⃣ Commit & push to repo
       - name: Commit & push build folder
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,11 +69,11 @@ jobs:
 
           cd web
 
-          # Force add build folder even if in gitignore
           git add -f build
 
-          # Only commit if there are changes
-          git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
-
-          # Push changes back to main branch
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update build folder [skip ci]"
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
+          fi
