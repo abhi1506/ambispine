@@ -1,54 +1,50 @@
-name: Build, Commit & Download (Node 22)
+name: Build and Push React Build
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write   # Ensure Actions can push
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-        with: { persist-credentials: false }
+      # 👇 Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # required for push via HTTPS
 
-      - uses: actions/setup-node@v4
-        with: { node-version: 22 }
+      # 👇 Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
+      # 👇 Install dependencies (inside web folder)
       - name: Install dependencies
         working-directory: web
-        run: npm install --legacy-peer-deps
+        run: npm install
 
-      - name: Patch CRA for Node 22
+      # 👇 Build React app
+      - name: Build
         working-directory: web
-        run: npm install react-scripts@5 --legacy-peer-deps
+        run: npm run build
 
-      - name: Clean build
-        working-directory: web
-        run: rm -rf build || true
-
-      - name: Build React
-        working-directory: web
-        run: npm run build --verbose
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: react-build
-          path: web/build
-
-      - name: Commit & push
-        env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
+      # 👇 Commit & push build folder back to repo
+      - name: Commit & push build folder
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          cd web
           git config user.name "abhi1506"
           git config user.email "abhisheksingh200515@gmail.com"
-          cd web
-          git add -f build
-          git diff --cached --quiet || {
-            git commit -m "chore: update build [skip ci]"
-            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
-          }
+          git add build/**
+          # Only commit if there are changes
+          git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
