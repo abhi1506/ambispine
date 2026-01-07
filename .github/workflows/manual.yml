@@ -14,10 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout code with full history
         uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -37,11 +38,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd web
-          git config user.name "abhi1506"
-          git config user.email "abhisheksingh200515@gmail.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # add only if folder exists
-          if [ -d "build" ]; then git add build; fi
+          git add build
 
           git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
+          git push
