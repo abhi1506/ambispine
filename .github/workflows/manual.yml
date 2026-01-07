@@ -14,34 +14,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
         working-directory: web
 
+      # 4️⃣ Build React app
       - name: Build React app
         run: npm run build
         working-directory: web
 
-      - name: Debug build folder
+      # 5️⃣ Debug: list files in web folder
+      - name: List web folder
         run: ls -R web
 
+      # 6️⃣ Commit & push build folder if it exists
       - name: Commit & push build folder
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "abhi1506"
           git config user.email "abhisheksingh200515@gmail.com"
-          # Force add files even if ignored
-          git add -f web/build/**
-          git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
+          # Only commit if build folder exists
+          if [ -d "web/build" ]; then
+            echo "Build folder exists, adding files..."
+            git add -f web/build/**
+            git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
+          else
+            echo "No build folder found, skipping commit."
+          fi
