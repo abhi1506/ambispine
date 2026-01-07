@@ -32,15 +32,16 @@ jobs:
         run: npm run build
         working-directory: web
 
+      - name: Debug build folder
+        run: ls -R web
+
       - name: Commit & push build folder
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "abhi1506"
           git config user.email "abhisheksingh200515@gmail.com"
-          # Add build folder from repo root
-          git add web/build/**
-          # Commit only if changes exist
+          # Force add files even if ignored
+          git add -f web/build/**
           git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
-          # Push using GITHUB_TOKEN
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
