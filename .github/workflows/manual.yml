@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: false  # We'll use GITHUB_TOKEN to push
+          persist-credentials: false
 
       # 2️⃣ Setup Node.js
       - name: Setup Node.js
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 22
 
-      # 3️⃣ Install dependencies (inside web folder)
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
         working-directory: web
@@ -33,11 +33,21 @@ jobs:
         run: npm run build
         working-directory: web
 
-      # 5️⃣ Commit and push build folder (manual git commands)
+      # 4.1️⃣ Debug: List files
+      - name: List web folder
+        run: ls -R web
+
+      # 5️⃣ Commit and push build folder if it exists
       - name: Commit and push build folder
         run: |
-          git config user.name "abhi1506"
-          git config user.email "abhisheksingh200515@gmail.com"
-          git add web/build/**
-          git diff --quiet && echo "No changes to commit" || git commit -m "chore: update build folder [skip ci]"
-          git push origin main
+          if [ -d "web/build" ]; then
+            echo "Build folder exists. Committing..."
+            git config user.name "abhi1506"
+            git config user.email "abhisheksingh200515@gmail.com"
+            git add web/build/**
+            git diff --quiet && echo "No changes to commit" || git commit -m "chore: update build folder [skip ci]"
+            git push origin main
+          else
+            echo "No build folder found. Skipping commit."
+          fi
+
