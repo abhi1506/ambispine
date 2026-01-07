@@ -7,36 +7,31 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # Ensure Actions can push
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 👇 Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          persist-credentials: false  # required for push via HTTPS
+          persist-credentials: false
 
-      # 👇 Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # 👇 Install dependencies (inside web folder)
       - name: Install dependencies
         working-directory: web
         run: npm install
 
-      # 👇 Build React app
-      - name: Build
+      - name: Build React app
         working-directory: web
         run: npm run build
 
-      # 👇 Commit & push build folder back to repo
       - name: Commit & push build folder
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,7 +39,9 @@ jobs:
           cd web
           git config user.name "abhi1506"
           git config user.email "abhisheksingh200515@gmail.com"
-          git add build/**
-          # Only commit if there are changes
+
+          # add only if folder exists
+          if [ -d "build" ]; then git add build; fi
+
           git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
