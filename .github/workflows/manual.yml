@@ -7,54 +7,60 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write  # Needed to push back to repo
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 📥 Checkout repo
+      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      # 📦 Setup Node
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # 📥 Install dependencies
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         working-directory: web
         run: npm install
 
-      # 📦 Build production bundle
+      # 4️⃣ Build React app
       - name: Build React app
         working-directory: web
         run: npm run build
 
-      # 🧪 Debug — See what’s in web folder
-      - name: List contents
+      # 5️⃣ Debug — confirm build folder exists
+      - name: List web folder
         run: ls -R web
 
-      # ✨ Commit build folder
+      # 6️⃣ Commit & push build folder
       - name: Commit & push build folder
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "abhi1506"
           git config user.email "abhisheksingh200515@gmail.com"
-          # Only commit if build folder exists
+          
+          # Make sure build folder exists
           if [ -d "web/build" ]; then
-            echo "Adding build artifacts..."
+            echo "Build folder exists — committing..."
+            
+            # Force add even if gitignore ignores it
             git add -f web/build/**
-            # Only commit if there are changes
+
+            # Commit only if there are changes
             git diff --cached --quiet || git commit -m "chore: update build folder [skip ci]"
+
+            # Push to the same branch using GITHUB_TOKEN
             git push "https://x-access-token:${GITHUB_TOKEN}@github.com/abhi1506/ambispine.git" HEAD:main
           else
-            echo "No build folder found — skipping commit"
+            echo "No build folder found — cannot commit"
+            exit 1  # Fail workflow if build is missing
           fi
-
