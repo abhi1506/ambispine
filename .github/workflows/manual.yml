@@ -1,58 +1,116 @@
-name: Build and Push React Build
+# name: Build and Push React Build
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+
+# permissions:
+#   contents: write
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code with full history
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#           persist-credentials: true
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 22
+
+#       - name: Install dependencies
+#         working-directory: web
+#         run: npm install
+
+#       - name: Build React/Vite app
+#         working-directory: web
+#         run: npm run build
+
+#       - name: Commit & push build artifacts
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         run: |
+#           cd web
+#           git config user.name "abhi1506"
+#           git config user.email "abhisheksingh200515@gmail.com"
+
+#           # Detect build/dist folder
+#           if [ -d "build" ]; then
+#             TARGET="build"
+#           elif [ -d "dist" ]; then
+#             TARGET="dist"
+#           else
+#             echo  "No build/dist folder found — skipping commit"
+#             exit 0
+#           fi
+
+#           echo "Found $TARGET folder, committing…"
+
+
+
+name: Build & Deploy Vite App
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code with full history
+      # 1️ Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: true
 
+      # 2️ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '22'
 
+      # 3️ Install dependencies
       - name: Install dependencies
-        working-directory: web
         run: npm install
 
-      - name: Build React/Vite app
-        working-directory: web
+      # 4️ Build Vite app
+      - name: Build Vite app
         run: npm run build
 
-      - name: Commit & push build artifacts
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd web
-          git config user.name "abhi1506"
-          git config user.email "abhisheksingh200515@gmail.com"
+      # 5️ Copy build to server
+      - name: Deploy to server via SSH
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.172.17.0.1 }}
+          username: ${{ secrets.abhi }}
+          key: ${{ secrets.AAAAC3NzaC1lZDI1NTE5AAAAIL7ug3wXYk3eWq0CBFP7Sr4a1v8H4YdR/aApNkCh0s9S }}
+          port: 22
+          source: "dist/*"
+          target: "/var/www/myapp/"
 
-          # Detect build/dist folder
-          if [ -d "build" ]; then
-            TARGET="build"
-          elif [ -d "dist" ]; then
-            TARGET="dist"
-          else
-            echo  "No build/dist folder found — skipping commit"
-            exit 0
-          fi
+      # 6️ Restart Nginx
+      - name: Restart Nginx
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.172.17.0.1 }}
+          username: ${{ secrets.abhi }}
+          key: ${{ secrets.AAAAC3NzaC1lZDI1NTE5AAAAIL7ug3wXYk3eWq0CBFP7Sr4a1v8H4YdR/aApNkCh0s9S }}
+          port: 22
+          script: |
+            sudo systemctl restart nginx
 
-          echo "Found $TARGET folder, committing…"
 
-          git add $TARGET
-          git diff --cached --quiet || git commit -m "chore: update $TARGET folder [skip ci]"
-          git push
+
+
+
+#           git add $TARGET
+#           git diff --cached --quiet || git commit -m "chore: update $TARGET folder [skip ci]"
+#           git push
