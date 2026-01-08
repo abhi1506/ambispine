@@ -58,7 +58,6 @@
 
 
 
-
 name: Build & Deploy Vite App
 
 on:
@@ -67,46 +66,46 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️ Checkout code
-      - name: Checkout repo
+      # 1️⃣ Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 2️ Setup Node.js
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      # 3️ Install dependencies
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # 4️ Build Vite app
-      - name: Build Vite app
+      # 4️⃣ Build app
+      - name: Build Vite
         run: npm run build
 
-      # 5️ Copy build to server
-      - name: Deploy to server via SSH
-        uses: appleboy/scp-action@v0.1.4
+      # 5️⃣ Copy build to server
+      - name: Deploy via SCP
+        uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.172.17.0.1 }}
-          username: ${{ secrets.abhi }}
-          key: ${{ secrets.AAAAC3NzaC1lZDI1NTE5AAAAIL7ug3wXYk3eWq0CBFP7Sr4a1v8H4YdR/aApNkCh0s9S }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           source: "dist/*"
           target: "/var/www/myapp/"
 
-      # 6️ Restart Nginx
+      # 6️⃣ Restart Nginx
       - name: Restart Nginx
-        uses: appleboy/ssh-action@v0.1.5
+        uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.172.17.0.1 }}
-          username: ${{ secrets.abhi }}
-          key: ${{ secrets.AAAAC3NzaC1lZDI1NTE5AAAAIL7ug3wXYk3eWq0CBFP7Sr4a1v8H4YdR/aApNkCh0s9S }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
             sudo systemctl restart nginx
