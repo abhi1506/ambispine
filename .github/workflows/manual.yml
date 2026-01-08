@@ -85,25 +85,3 @@ jobs:
       # 4️⃣ Build React app
       - name: Build React app
         run: npm run build
-
-      # 5️⃣ Deploy build to server
-      - name: Deploy to server via SCP
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          source: "dist/*"       # React/Vite build output
-          target: "/var/www/myapp/"
-
-      # 6️⃣ Restart Nginx
-      - name: Restart Nginx
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            sudo systemctl restart nginx
