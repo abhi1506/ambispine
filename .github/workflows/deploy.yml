@@ -1,0 +1,44 @@
+name: Build & Deploy React App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️ Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️ Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # match your Node version
+
+      # 3️ Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 4️ Build app
+      - name: Build app
+        run: npm run build
+
+      # 5️ Copy files to server via SSH
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
+          script: |
+            echo "Deploying React app..."
+            rm -rf /var/www/myapp/*
+            cp -r ./dist/* /var/www/myapp/
+            sudo systemctl restart nginx
