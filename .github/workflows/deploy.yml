@@ -35,7 +35,7 @@ jobs:
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: 172.17.0.1
+          host: 10.64.1.35
           username: abhi
           key: AAAAC3NzaC1lZDI1NTE5AAAAIL7ug3wXYk3eWq0CBFP7Sr4a1v8H4YdR/aApNkCh0s9S 
           port: 22
