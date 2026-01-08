@@ -52,6 +52,10 @@
 #           fi
 
 #           echo "Found $TARGET folder, committing…"
+#           git add $TARGET
+#           git diff --cached --quiet || git commit -m "chore: update $TARGET folder [skip ci]"
+#           git push
+
 
 
 
@@ -106,11 +110,3 @@ jobs:
           port: 22
           script: |
             sudo systemctl restart nginx
-
-
-
-
-
-#           git add $TARGET
-#           git diff --cached --quiet || git commit -m "chore: update $TARGET folder [skip ci]"
-#           git push
