@@ -19,17 +19,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # match your Node version
+          node-version: '20'
 
       # 3️ Install dependencies
-            - name: Install dependencies
-        working-directory: ./frontend   # adjust this
+      - name: Install dependencies
+        working-directory: ./web   # <-- React app folder
         run: npm install
 
+      # 4️ Build app
       - name: Build app
-        working-directory: ./frontend
+        working-directory: ./web   # <-- same folder
         run: npm run build
 
+      # 5️ Deploy to server
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -40,5 +42,5 @@ jobs:
           script: |
             echo "Deploying React app..."
             rm -rf /var/www/myapp/*
-            cp -r ./frontend/dist/* /var/www/myapp/
+            cp -r ./web/dist/* /var/www/myapp/
             sudo systemctl restart nginx
