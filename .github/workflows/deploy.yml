@@ -6,23 +6,28 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code with full history
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install dependencies
+        working-directory: web
         run: npm install
 
-      - name: Build project
-        run: npm run build   # creates build or dist folder
+      - name: Build React/Vite app
+        working-directory: web
+        run: npm run build
 
       # Copy to site1
       - name: Copy to site1
@@ -31,7 +36,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
-          source: "build/*"
+          source: "web/dist/*"
           target: "/var/www/site1/"
 
       # Copy to site2
@@ -41,7 +46,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
-          source: "build/*"
+          source: "web/dist/*"
           target: "/var/www/site2/"
 
       # Copy to site3
@@ -51,7 +56,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
-          source: "build/*"
+          source: "web/dist/*"
           target: "/var/www/site3/"
 
       # Reload nginx (no restart)
