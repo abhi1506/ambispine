@@ -1,46 +1,66 @@
-name: Build & Deploy React App
+name: Deploy React Build to Multiple Nginx Folders
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️ Checkout code
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 2️ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 18
 
-      # 3️ Install dependencies
       - name: Install dependencies
-        working-directory: ./web   # <-- React app folder
         run: npm install
 
-      # 4️ Build app
-      - name: Build app
-        working-directory: ./web   # <-- same folder
-        run: npm run build
+      - name: Build project
+        run: npm run build   # creates build or dist folder
 
-      # 5️ Deploy to server
-      - name: Deploy to server
+      # Copy to site1
+      - name: Copy to site1
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          source: "build/*"
+          target: "/var/www/site1/"
+
+      # Copy to site2
+      - name: Copy to site2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          source: "build/*"
+          target: "/var/www/site2/"
+
+      # Copy to site3
+      - name: Copy to site3
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          source: "build/*"
+          target: "/var/www/site3/"
+
+      # Reload nginx (no restart)
+      - name: Reload Nginx
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: 10.64.1.35
-          username: abhi
-          key: AAAAC3NzaC1lZDI1NTE5AAAAIL7ug3wXYk3eWq0CBFP7Sr4a1v8H4YdR/aApNkCh0s9S 
-          port: 22
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
           script: |
-            echo "Deploying React app..."
-            rm -rf /var/www/myapp/*
-            cp -r ./web/dist/* /var/www/myapp/
-            sudo systemctl restart nginx
+            sudo nginx -t
+            sudo systemctl reload nginx
