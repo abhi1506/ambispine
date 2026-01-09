@@ -69,8 +69,9 @@
 #           script: |
 #             sudo nginx -t
 #             sudo systemctl reload nginx
-|
-            sudo systemctl restart nginx
+# |
+            # sudo systemctl restart nginx
+            
 name: Deploy Frontend to NGINX
 
 on:
