@@ -1,4 +1,79 @@
-name: Deploy React Build to Multiple Nginx Folders
+# name: Deploy React Build to Multiple Nginx Folders
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code with full history
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#           persist-credentials: true
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 22
+
+#       - name: Install dependencies
+#         working-directory: web
+#         run: npm install
+
+#       - name: Build React/Vite app
+#         working-directory: web
+#         run: npm run build
+
+#       # Copy to site1
+#       - name: Copy to site1
+#         uses: appleboy/scp-action@v0.1.7
+#         with:
+#           host: ${{ secrets.SERVER_IP }}
+#           username: ${{ secrets.SERVER_USER }}
+#           key: ${{ secrets.SERVER_KEY }}
+#           source: "web/dist/*"
+#           target: "/var/www/site1/"
+
+#       # Copy to site2
+#       - name: Copy to site2
+#         uses: appleboy/scp-action@v0.1.7
+#         with:
+#           host: ${{ secrets.SERVER_IP }}
+#           username: ${{ secrets.SERVER_USER }}
+#           key: ${{ secrets.SERVER_KEY }}
+#           source: "web/dist/*"
+#           target: "/var/www/site2/"
+
+#       # Copy to site3
+#       - name: Copy to site3
+#         uses: appleboy/scp-action@v0.1.7
+#         with:
+#           host: ${{ secrets.SERVER_IP }}
+#           username: ${{ secrets.SERVER_USER }}
+#           key: ${{ secrets.SERVER_KEY }}
+#           source: "web/dist/*"
+#           target: "/var/www/site3/"
+
+#       # Reload nginx (no restart)
+#       - name: Reload Nginx
+#         uses: appleboy/ssh-action@v0.1.7
+#         with:
+#           host: ${{ secrets.SERVER_IP }}
+#           username: ${{ secrets.SERVER_USER }}
+#           key: ${{ secrets.SERVER_KEY }}
+#           script: |
+#             sudo nginx -t
+#             sudo systemctl reload nginx
+
+
+
+
+name: Build & Deploy Frontend
 
 on:
   push:
@@ -6,66 +81,38 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code with full history
+      - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 18
 
-      - name: Install dependencies
-        working-directory: web
-        run: npm install
+      - name: Install Dependencies & Build
+        run: |
+          npm install
+          npm run build
 
-      - name: Build React/Vite app
-        working-directory: web
-        run: npm run build
-
-      # Copy to site1
-      - name: Copy to site1
+      - name: Copy Build to Server via SSH
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_KEY }}
-          source: "web/dist/*"
-          target: "/var/www/site1/"
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          rm: true
+          source: "dist/*"
+          target: "/var/www/myapp"
 
-      # Copy to site2
-      - name: Copy to site2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_KEY }}
-          source: "web/dist/*"
-          target: "/var/www/site2/"
-
-      # Copy to site3
-      - name: Copy to site3
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_KEY }}
-          source: "web/dist/*"
-          target: "/var/www/site3/"
-
-      # Reload nginx (no restart)
-      - name: Reload Nginx
+      - name: Restart NGINX
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_KEY }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            sudo nginx -t
-            sudo systemctl reload nginx
+            sudo systemctl restart nginx
