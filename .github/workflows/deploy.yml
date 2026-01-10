@@ -109,7 +109,7 @@ jobs:
           rm: true
           source: "web/dist/*"   # Vite → dist; React → build
           target: "/var/www/myapp"
-
+          
       - name: Restart NGINX
         uses: appleboy/ssh-action@v0.1.7
         with:
