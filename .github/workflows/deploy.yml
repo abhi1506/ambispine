@@ -169,7 +169,7 @@
 #             sudo nginx -t;
 #             sudo systemctl reload nginx
 #           "
-name: Deploy to EC2 + Nginx
+name: Deploy React to EC2 + Nginx
 
 on:
   push:
@@ -185,36 +185,49 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Build project from /web folder
-      - name: Build Project
+      # 2️⃣ Setup Node
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      # 3️⃣ Build React app in /web
+      - name: Install and Build
         working-directory: ./web
         run: |
           npm install
           npm run build
 
-      # 3️⃣ Test SSH connectivity
-      - name: Test SSH Connection
+      # 4️⃣ Add SSH key
+      - name: Add SSH Key
         run: |
-          ssh -i ${{ secrets.SERVER_SSH_KEY }} -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "echo 'Connected to EC2!'"
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
-      # 4️⃣ Copy files to server (from web/build)
-      - name: Copy files to EC2
+      # 5️⃣ Test SSH connection
+      - name: Test SSH Connection
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "echo 'Connected to EC2!'"
+
+      # 6️⃣ Copy build files to server
+      - name: Copy Build to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ubuntu
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
-          source: "web/build/*"
-          target: "/var/www/html/myapp"
+          source: "web/build/*"              # adjust if using Vite (dist)
+          target: "/var/www/html/myapp"      # change to your server path
           overwrite: true
           strip_components: 0
           debug: true
 
-      # 5️⃣ Set permissions & reload Nginx
+      # 7️⃣ Set permissions & reload Nginx
       - name: Set Permissions & Reload Nginx
         run: |
-          ssh -i ${{ secrets.SERVER_SSH_KEY }} -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "
             sudo chown -R www-data:www-data /var/www/html/myapp;
             sudo chmod -R 755 /var/www/html/myapp;
             sudo nginx -t;
