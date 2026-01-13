@@ -185,21 +185,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Node
+      # 2️⃣ Setup Node.js with caching for /web/package-lock.json
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: npm
+          cache: 'npm'
+          cache-dependency-path: ./web/package-lock.json
 
-      # 3️⃣ Build React app in /web
-      - name: Install and Build
+      # 3️⃣ Install dependencies & build React in /web
+      - name: Install and Build React
         working-directory: ./web
         run: |
           npm install
           npm run build
 
-      # 4️⃣ Add SSH key
+      # 4️⃣ Add SSH key for server
       - name: Add SSH Key
         run: |
           mkdir -p ~/.ssh
@@ -210,7 +211,7 @@ jobs:
       - name: Test SSH Connection
         run: ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "echo 'Connected to EC2!'"
 
-      # 6️⃣ Copy build files to server
+      # 6️⃣ Copy React build to server
       - name: Copy Build to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -218,8 +219,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
-          source: "web/build/*"              # adjust if using Vite (dist)
-          target: "/var/www/html/myapp"      # change to your server path
+          source: "web/build/*"             # CRA: build folder, Vite: use "web/dist/*"
+          target: "/var/www/html/myapp"     # your Nginx root folder
           overwrite: true
           strip_components: 0
           debug: true
@@ -233,3 +234,4 @@ jobs:
             sudo nginx -t;
             sudo systemctl reload nginx
           "
+          
