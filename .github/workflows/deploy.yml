@@ -315,6 +315,92 @@
 #             sudo systemctl reload nginx
 #           "
 
+# name: Deploy React to EC2 + Nginx
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       # 1️⃣ Checkout code
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       # 2️⃣ Setup Node.js with caching for /web/package-lock.json
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 18
+#           cache: 'npm'
+#           cache-dependency-path: ./web/package-lock.json
+
+#       # 3️⃣ Install dependencies & build React in /web
+#       - name: Install and Build React
+#         working-directory: ./web
+#         run: |
+#           npm install
+#           npm run build
+
+#       # 4️⃣ Detect build folder automatically (CRA build or Vite dist)
+#       - name: Detect Build Folder
+#         run: |
+#           if [ -d "web/build" ]; then
+#             echo "BUILD_FOLDER=web/build" >> $GITHUB_ENV
+#           elif [ -d "web/dist" ]; then
+#             echo "BUILD_FOLDER=web/dist" >> $GITHUB_ENV
+#           else
+#             echo "No build folder found!"
+#             exit 1
+#           fi
+
+#       # 5️⃣ Add SSH key for server
+#       - name: Add SSH Key
+#         run: |
+#           mkdir -p ~/.ssh
+#           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+#           chmod 600 ~/.ssh/id_rsa
+
+#       # 6️⃣ Test SSH connection
+#       - name: Test SSH Connection
+#         run: ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "echo 'Connected to EC2!'"
+
+#       # 7️⃣ Ensure target folder exists & is writable
+#       - name: Prepare Target Folder
+#         run: |
+#           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "
+#             sudo mkdir -p /var/www/html/myapp;
+#             sudo chown -R ubuntu:ubuntu /var/www/html/myapp
+#           "
+
+#       # 8️⃣ Copy build folder to EC2
+#       - name: Copy Build to EC2
+#         uses: appleboy/scp-action@v0.1.7
+#         with:
+#           host: ${{ secrets.SERVER_IP }}
+#           username: ubuntu
+#           key: ${{ secrets.SERVER_SSH_KEY }}
+#           port: 22
+#           source: "${{ env.BUILD_FOLDER }}/*"
+#           target: "/var/www/html/myapp"
+#           overwrite: true
+#           strip_components: 0
+#           debug: true
+
+#       # 9️⃣ Set permissions & reload Nginx
+#       - name: Set Permissions & Reload Nginx
+#         run: |
+#           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "
+#             sudo chown -R www-data:www-data /var/www/html/myapp;
+#             sudo chmod -R 755 /var/www/html/myapp;
+#             sudo nginx -t;
+#             sudo systemctl reload nginx
+#           "
+
 name: Deploy React to EC2 + Nginx
 
 on:
@@ -331,7 +417,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Node.js with caching for /web/package-lock.json
+      # 2️⃣ Setup Node.js with caching
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -339,14 +425,14 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./web/package-lock.json
 
-      # 3️⃣ Install dependencies & build React in /web
+      # 3️⃣ Install dependencies & build React inside web folder
       - name: Install and Build React
         working-directory: ./web
         run: |
           npm install
           npm run build
 
-      # 4️⃣ Detect build folder automatically (CRA build or Vite dist)
+      # 4️⃣ Detect build folder automatically
       - name: Detect Build Folder
         run: |
           if [ -d "web/build" ]; then
@@ -354,30 +440,32 @@ jobs:
           elif [ -d "web/dist" ]; then
             echo "BUILD_FOLDER=web/dist" >> $GITHUB_ENV
           else
-            echo "No build folder found!"
+            echo "❌ No build or dist folder found!"
             exit 1
           fi
 
-      # 5️⃣ Add SSH key for server
+      # 5️⃣ Add SSH key securely
       - name: Add SSH Key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
       # 6️⃣ Test SSH connection
       - name: Test SSH Connection
-        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "echo 'Connected to EC2!'"
+        run: ssh ubuntu@${{ secrets.SERVER_IP }} "echo 'Connected to EC2!'"
 
-      # 7️⃣ Ensure target folder exists & is writable
-      - name: Prepare Target Folder
+      # 7️⃣ Prepare Target Folder + cleanup old files
+      - name: Prepare and Clean Target Folder
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "
+          ssh ubuntu@${{ secrets.SERVER_IP }} "
             sudo mkdir -p /var/www/html/myapp;
-            sudo chown -R ubuntu:ubuntu /var/www/html/myapp
+            sudo chown -R ubuntu:ubuntu /var/www/html/myapp;
+            sudo rm -rf /var/www/html/myapp/*;
           "
 
-      # 8️⃣ Copy build folder to EC2
+      # 8️⃣ Copy build output to EC2
       - name: Copy Build to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -391,12 +479,12 @@ jobs:
           strip_components: 0
           debug: true
 
-      # 9️⃣ Set permissions & reload Nginx
-      - name: Set Permissions & Reload Nginx
+      # 9️⃣ Set permissions & restart Nginx safely
+      - name: Set Permissions & Restart Nginx
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "
+          ssh ubuntu@${{ secrets.SERVER_IP }} "
             sudo chown -R www-data:www-data /var/www/html/myapp;
             sudo chmod -R 755 /var/www/html/myapp;
             sudo nginx -t;
-            sudo systemctl reload nginx
+            sudo systemctl restart nginx || sudo systemctl reload nginx;
           "
