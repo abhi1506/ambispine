@@ -1,57 +1,57 @@
-# name: Build and Push React Build
+name: Build and Push React Build
 
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_dispatch:
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
-# permissions:
-#   contents: write
+permissions:
+  contents: write
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Checkout code with full history
-#         uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 0
-#           persist-credentials: true
+    steps:
+      - name: Checkout code with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: 22
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-#       - name: Install dependencies
-#         working-directory: web
-#         run: npm install
+      - name: Install dependencies
+        working-directory: web
+        run: npm install
 
-#       - name: Build React/Vite app
-#         working-directory: web
-#         run: npm run build
+      - name: Build React/Vite app
+        working-directory: web
+        run: npm run build
 
-#       - name: Commit & push build artifacts
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#         run: |
-#           cd web
-#           git config user.name "abhi1506"
-#           git config user.email "abhisheksingh200515@gmail.com"
+      - name: Commit & push build artifacts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd web
+          git config user.name "abhi1506"
+          git config user.email "abhisheksingh200515@gmail.com"
 
-#           # Detect build/dist folder
-#           if [ -d "build" ]; then
-#             TARGET="build"
-#           elif [ -d "dist" ]; then
-#             TARGET="dist"
-#           else
-#             echo  "No build/dist folder found — skipping commit"
-#             exit 0
-#           fi
+          # Detect build/dist folder
+          if [ -d "build" ]; then
+            TARGET="build"
+          elif [ -d "dist" ]; then
+            TARGET="dist"
+          else
+            echo  "No build/dist folder found — skipping commit"
+            exit 0
+          fi
 
-#           echo "Found $TARGET folder, committing…"
-#           git add $TARGET
-#           git diff --cached --quiet || git commit -m "chore: update $TARGET folder [skip ci]"
-#           git push
+          echo "Found $TARGET folder, committing…"
+          git add $TARGET
+          git diff --cached --quiet || git commit -m "chore: update $TARGET folder [skip ci]"
+          git push
