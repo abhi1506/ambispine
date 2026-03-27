@@ -440,7 +440,7 @@ jobs:
           elif [ -d "web/dist" ]; then
             echo "BUILD_FOLDER=web/dist" >> $GITHUB_ENV
           else
-            echo "❌ No build or dist folder found!"
+            echo " No build or dist folder found!"
             exit 1
           fi
 
