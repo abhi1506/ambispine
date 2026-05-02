@@ -400,8 +400,97 @@
 #             sudo nginx -t;
 #             sudo systemctl reload nginx
 #           "
+# ==================================================================================
+# name: Deploy React to EC2 + Nginx
 
-name: Deploy React to EC2 + Nginx
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       # 1️⃣ Checkout code
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       # 2️⃣ Setup Node.js with caching
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 18
+#           cache: 'npm'
+#           cache-dependency-path: ./web/package-lock.json
+
+#       # 3️⃣ Install dependencies & build React inside web folder
+#       - name: Install and Build React
+#         working-directory: ./web
+#         run: |
+#           npm install
+#           npm run build
+
+#       # 4️⃣ Detect build folder automatically
+#       - name: Detect Build Folder
+#         run: |
+#           if [ -d "web/build" ]; then
+#             echo "BUILD_FOLDER=web/build" >> $GITHUB_ENV
+#           elif [ -d "web/dist" ]; then
+#             echo "BUILD_FOLDER=web/dist" >> $GITHUB_ENV
+#           else
+#             echo " No build or dist folder found!"
+#             exit 1
+#           fi
+
+#       # 5️⃣ Add SSH key securely
+#       - name: Add SSH Key
+#         run: |
+#           mkdir -p ~/.ssh
+#           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+#           chmod 600 ~/.ssh/id_rsa
+#           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+#       # 6️⃣ Test SSH connection
+#       - name: Test SSH Connection
+#         run: ssh ubuntu@${{ secrets.SERVER_IP }} "echo 'Connected to EC2!'"
+
+#       # 7️⃣ Prepare Target Folder + cleanup old files
+#       - name: Prepare and Clean Target Folder
+#         run: |
+#           ssh ubuntu@${{ secrets.SERVER_IP }} "
+#             sudo mkdir -p /var/www/html/myapp;
+#             sudo chown -R ubuntu:ubuntu /var/www/html/myapp;
+#             sudo rm -rf /var/www/html/myapp/*;
+#           "
+
+#       # 8️⃣ Copy build output to EC2
+#       - name: Copy Build to EC2
+#         uses: appleboy/scp-action@v0.1.7
+#         with:
+#           host: ${{ secrets.SERVER_IP }}
+#           username: ubuntu
+#           key: ${{ secrets.SERVER_SSH_KEY }}
+#           port: 22
+#           source: "${{ env.BUILD_FOLDER }}/*"
+#           target: "/var/www/html/myapp"
+#           overwrite: true
+#           strip_components: 0
+#           debug: true
+
+#       # 9️⃣ Set permissions & restart Nginx safely
+#       - name: Set Permissions & Restart Nginx
+#         run: |
+#           ssh ubuntu@${{ secrets.SERVER_IP }} "
+#             sudo chown -R www-data:www-data /var/www/html/myapp;
+#             sudo chmod -R 755 /var/www/html/myapp;
+#             sudo nginx -t;
+#             sudo systemctl restart nginx || sudo systemctl reload nginx;
+#           "
+# ============================================================================
+
+name: Deploy React to EC2 via Docker
 
 on:
   push:
@@ -417,34 +506,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Node.js with caching
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      # 2️⃣ Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: ./web/package-lock.json
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 3️⃣ Install dependencies & build React inside web folder
-      - name: Install and Build React
-        working-directory: ./web
-        run: |
-          npm install
-          npm run build
+      # 3️⃣ Build and push Docker image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./web
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/myapp:latest
 
-      # 4️⃣ Detect build folder automatically
-      - name: Detect Build Folder
-        run: |
-          if [ -d "web/build" ]; then
-            echo "BUILD_FOLDER=web/build" >> $GITHUB_ENV
-          elif [ -d "web/dist" ]; then
-            echo "BUILD_FOLDER=web/dist" >> $GITHUB_ENV
-          else
-            echo " No build or dist folder found!"
-            exit 1
-          fi
-
-      # 5️⃣ Add SSH key securely
+      # 4️⃣ Add SSH key
       - name: Add SSH Key
         run: |
           mkdir -p ~/.ssh
@@ -452,39 +529,16 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      # 6️⃣ Test SSH connection
-      - name: Test SSH Connection
-        run: ssh ubuntu@${{ secrets.SERVER_IP }} "echo 'Connected to EC2!'"
-
-      # 7️⃣ Prepare Target Folder + cleanup old files
-      - name: Prepare and Clean Target Folder
+      # 5️⃣ Deploy on EC2 — pull image and restart container
+      - name: Deploy on EC2
         run: |
           ssh ubuntu@${{ secrets.SERVER_IP }} "
-            sudo mkdir -p /var/www/html/myapp;
-            sudo chown -R ubuntu:ubuntu /var/www/html/myapp;
-            sudo rm -rf /var/www/html/myapp/*;
-          "
-
-      # 8️⃣ Copy build output to EC2
-      - name: Copy Build to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ubuntu
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
-          source: "${{ env.BUILD_FOLDER }}/*"
-          target: "/var/www/html/myapp"
-          overwrite: true
-          strip_components: 0
-          debug: true
-
-      # 9️⃣ Set permissions & restart Nginx safely
-      - name: Set Permissions & Restart Nginx
-        run: |
-          ssh ubuntu@${{ secrets.SERVER_IP }} "
-            sudo chown -R www-data:www-data /var/www/html/myapp;
-            sudo chmod -R 755 /var/www/html/myapp;
-            sudo nginx -t;
-            sudo systemctl restart nginx || sudo systemctl reload nginx;
+            docker pull ${{ secrets.DOCKER_USERNAME }}/myapp:latest &&
+            docker stop myapp || true &&
+            docker rm myapp || true &&
+            docker run -d \
+              --name myapp \
+              --restart always \
+              -p 80:80 \
+              ${{ secrets.DOCKER_USERNAME }}/myapp:latest
           "
