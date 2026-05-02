@@ -552,8 +552,8 @@ on:
 
 env:
   AWS_REGION: ap-south-1
-  ECR_REPOSITORY: myapp
-  CONTAINER_NAME: myapp
+  ECR_REPOSITORY: abhinew
+  CONTAINER_NAME: abhinew
 
 jobs:
   deploy:
@@ -575,12 +575,12 @@ jobs:
       # 3️⃣ Build Docker image locally
       - name: Build Docker image
         run: |
-          docker build -t myapp:latest ./web
+          docker build -t abhinew:latest ./web
 
       # 4️⃣ Verify image was built
       - name: Verify Docker image
         run: |
-          docker images myapp:latest
+          docker images abhinew:latest
           echo "Docker build successful"
 
       # ════════════════════════════════
@@ -591,9 +591,9 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}         
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+          aws-region: ${{ env.AWS_REGION }}                           
 
       # 6️⃣ Login to Amazon ECR
       - name: Login to Amazon ECR
@@ -606,8 +606,8 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker tag myapp:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker tag myapp:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker tag abhinew:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG  # ✅ fixed
+          docker tag abhinew:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest      # ✅ fixed
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
