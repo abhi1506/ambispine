@@ -543,7 +543,6 @@
 #               ${{ secrets.DOCKER_USERNAME }}/myapp:latest
 #           "
 # ==============================================================================
-
 name: Deploy React Vite to EC2 via ECR
 
 on:
@@ -561,11 +560,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ════════════════════════════════
+      # STEP 1 — DOCKER BUILD
+      # ════════════════════════════════
+
       # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Configure AWS credentials
+      # 2️⃣ Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 3️⃣ Build Docker image locally
+      - name: Build Docker image
+        run: |
+          docker build -t myapp:latest ./web
+
+      # 4️⃣ Verify image was built
+      - name: Verify Docker image
+        run: |
+          docker images myapp:latest
+          echo "Docker build successful"
+
+      # ════════════════════════════════
+      # STEP 2 — AWS (ECR + EC2)
+      # ════════════════════════════════
+
+      # 5️⃣ Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -573,24 +595,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # 3️⃣ Login to Amazon ECR
+      # 6️⃣ Login to Amazon ECR
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 4️⃣ Build and push image to ECR
-      - name: Build and push Docker image to ECR
+      # 7️⃣ Tag and push image to ECR
+      - name: Tag and push image to ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./web
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-                     $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker tag myapp:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag myapp:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-      # 5️⃣ Add SSH key to connect to EC2
+      # 8️⃣ Add SSH key for EC2
       - name: Add SSH key
         run: |
           mkdir -p ~/.ssh
@@ -598,30 +619,25 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      # 6️⃣ Deploy on EC2 — pull from ECR and run container
+      # 9️⃣ SSH into EC2 and deploy
       - name: Deploy on EC2
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           ssh ubuntu@${{ secrets.SERVER_IP }} bash << EOF
-            # Login to ECR from EC2
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | \
               docker login --username AWS --password-stdin $ECR_REGISTRY
 
-            # Pull latest image from ECR
             docker pull $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
 
-            # Stop and remove old container if running
             docker stop ${{ env.CONTAINER_NAME }} || true
             docker rm   ${{ env.CONTAINER_NAME }} || true
 
-            # Run new container
             docker run -d \
               --name ${{ env.CONTAINER_NAME }} \
               --restart always \
               -p 80:80 \
               $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
 
-            # Clean up old unused images
             docker image prune -f
           EOF
