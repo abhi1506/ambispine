@@ -401,93 +401,92 @@
 #             sudo systemctl reload nginx
 #           "
 # ==================================================================================
-# name: Deploy React to EC2 + Nginx
+name: Deploy React to EC2 + Nginx
+on:
+  push:
+    branches:
+      - main
 
-# on:
-#   push:
-#     branches:
-#       - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-#     steps:
-#       # 1️⃣ Checkout code
-#       - name: Checkout code
-#         uses: actions/checkout@v3
+      # 2️⃣ Setup Node.js with caching
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: ./web/package-lock.json
 
-#       # 2️⃣ Setup Node.js with caching
-#       - name: Setup Node
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: 18
-#           cache: 'npm'
-#           cache-dependency-path: ./web/package-lock.json
+      # 3️⃣ Install dependencies & build React inside web folder
+      - name: Install and Build React
+        working-directory: ./web
+        run: |
+          npm install
+          npm run build
 
-#       # 3️⃣ Install dependencies & build React inside web folder
-#       - name: Install and Build React
-#         working-directory: ./web
-#         run: |
-#           npm install
-#           npm run build
+      # 4️⃣ Detect build folder automatically
+      - name: Detect Build Folder
+        run: |
+          if [ -d "web/build" ]; then
+            echo "BUILD_FOLDER=web/build" >> $GITHUB_ENV
+          elif [ -d "web/dist" ]; then
+            echo "BUILD_FOLDER=web/dist" >> $GITHUB_ENV
+          else
+            echo " No build or dist folder found!"
+            exit 1
+          fi
 
-#       # 4️⃣ Detect build folder automatically
-#       - name: Detect Build Folder
-#         run: |
-#           if [ -d "web/build" ]; then
-#             echo "BUILD_FOLDER=web/build" >> $GITHUB_ENV
-#           elif [ -d "web/dist" ]; then
-#             echo "BUILD_FOLDER=web/dist" >> $GITHUB_ENV
-#           else
-#             echo " No build or dist folder found!"
-#             exit 1
-#           fi
+      # 5️⃣ Add SSH key securely
+      - name: Add SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-#       # 5️⃣ Add SSH key securely
-#       - name: Add SSH Key
-#         run: |
-#           mkdir -p ~/.ssh
-#           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
-#           chmod 600 ~/.ssh/id_rsa
-#           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+      # 6️⃣ Test SSH connection
+      - name: Test SSH Connection
+        run: ssh ubuntu@${{ secrets.SERVER_IP }} "echo 'Connected '"
 
-#       # 6️⃣ Test SSH connection
-#       - name: Test SSH Connection
-#         run: ssh ubuntu@${{ secrets.SERVER_IP }} "echo 'Connected to EC2!'"
+      # 7️⃣ Prepare Target Folder + cleanup old files
+      - name: Prepare and Clean Target Folder
+        run: |
+          ssh ubuntu@${{ secrets.SERVER_IP }} "
+            sudo mkdir -p /var/www/html/myapp;
+            sudo chown -R ubuntu:ubuntu /var/www/html/myapp;
+            sudo rm -rf /var/www/html/myapp/*;
+          "
 
-#       # 7️⃣ Prepare Target Folder + cleanup old files
-#       - name: Prepare and Clean Target Folder
-#         run: |
-#           ssh ubuntu@${{ secrets.SERVER_IP }} "
-#             sudo mkdir -p /var/www/html/myapp;
-#             sudo chown -R ubuntu:ubuntu /var/www/html/myapp;
-#             sudo rm -rf /var/www/html/myapp/*;
-#           "
+      # 8️⃣ Copy build output to EC2
+      - name: Copy Build to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ubuntu
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
+          source: "${{ env.BUILD_FOLDER }}/*"
+          target: "/var/www/html/myapp"
+          overwrite: true
+          strip_components: 0
+          debug: true
 
-#       # 8️⃣ Copy build output to EC2
-#       - name: Copy Build to EC2
-#         uses: appleboy/scp-action@v0.1.7
-#         with:
-#           host: ${{ secrets.SERVER_IP }}
-#           username: ubuntu
-#           key: ${{ secrets.SERVER_SSH_KEY }}
-#           port: 22
-#           source: "${{ env.BUILD_FOLDER }}/*"
-#           target: "/var/www/html/myapp"
-#           overwrite: true
-#           strip_components: 0
-#           debug: true
-
-#       # 9️⃣ Set permissions & restart Nginx safely
-#       - name: Set Permissions & Restart Nginx
-#         run: |
-#           ssh ubuntu@${{ secrets.SERVER_IP }} "
-#             sudo chown -R www-data:www-data /var/www/html/myapp;
-#             sudo chmod -R 755 /var/www/html/myapp;
-#             sudo nginx -t;
-#             sudo systemctl restart nginx || sudo systemctl reload nginx;
-#           "
+      # 9️⃣ Set permissions & restart Nginx safely
+      - name: Set Permissions & Restart Nginx
+        run: |
+          ssh ubuntu@${{ secrets.SERVER_IP }} "
+            sudo chown -R www-data:www-data /var/www/html/myapp;
+            sudo chmod -R 755 /var/www/html/myapp;
+            sudo nginx -t;
+            sudo systemctl restart nginx || sudo systemctl reload nginx;
+          "
 # ============================================================================
 
 # name: Deploy React to EC2 via Docker
@@ -540,104 +539,104 @@
 #               --name myapp \
 #               --restart always \
 #               -p 80:80 \
-#               ${{ secrets.DOCKER_USERNAME }}/myapp:latest
-#           "
-# ==============================================================================
-name: Deploy React Vite to EC2 via ECR
+# #               ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+# #           "
+# # ==============================================================================
+# name: Deploy React Vite to EC2 via ECR
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-env:
-  AWS_REGION: ap-south-1
-  ECR_REPOSITORY: abhinew
-  CONTAINER_NAME: abhinew
+# env:
+#   AWS_REGION: ap-south-1
+#   ECR_REPOSITORY: abhinew
+#   CONTAINER_NAME: abhinew
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      # ════════════════════════════════
-      # STEP 1 — DOCKER BUILD
-      # ════════════════════════════════
+#     steps:
+#       # ════════════════════════════════
+#       # STEP 1 — DOCKER BUILD
+#       # ════════════════════════════════
 
-      # 1️⃣ Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
+#       # 1️⃣ Checkout code
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      # 2️⃣ Set up Docker Buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+#       # 2️⃣ Set up Docker Buildx
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v3
 
-      # 3️⃣ Build Docker image locally
-      - name: Build Docker image
-        run: |
-          docker build -t abhinew:latest ./web
+#       # 3️⃣ Build Docker image locally
+#       - name: Build Docker image
+#         run: |
+#           docker build -t abhinew:latest ./web
 
-      # 4️⃣ Verify image was built
-      - name: Verify Docker image
-        run: |
-          docker images abhinew:latest
-          echo "Docker build successful"
+#       # 4️⃣ Verify image was built
+#       - name: Verify Docker image
+#         run: |
+#           docker images abhinew:latest
+#           echo "Docker build successful"
 
-      # ════════════════════════════════
-      # STEP 2 — AWS (ECR + EC2)
-      # ════════════════════════════════
+#       # ════════════════════════════════
+#       # STEP 2 — AWS (ECR + EC2)
+#       # ════════════════════════════════
 
-      # 5️⃣ Configure AWS credentials
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}         
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
-          aws-region: ${{ env.AWS_REGION }}                           
+#       # 5️⃣ Configure AWS credentials
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v4
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}         
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+#           aws-region: ${{ env.AWS_REGION }}                           
 
-      # 6️⃣ Login to Amazon ECR
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+#       # 6️⃣ Login to Amazon ECR
+#       - name: Login to Amazon ECR
+#         id: login-ecr
+#         uses: aws-actions/amazon-ecr-login@v2
 
-      # 7️⃣ Tag and push image to ECR
-      - name: Tag and push image to ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker tag abhinew:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG  # ✅ fixed
-          docker tag abhinew:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest      # ✅ fixed
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+#       # 7️⃣ Tag and push image to ECR
+#       - name: Tag and push image to ECR
+#         env:
+#           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#           IMAGE_TAG: ${{ github.sha }}
+#         run: |
+#           docker tag abhinew:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG  # ✅ fixed
+#           docker tag abhinew:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest      # ✅ fixed
+#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-      # 8️⃣ Add SSH key for EC2
-      - name: Add SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+#       # 8️⃣ Add SSH key for EC2
+#       - name: Add SSH key
+#         run: |
+#           mkdir -p ~/.ssh
+#           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+#           chmod 600 ~/.ssh/id_rsa
+#           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      # 9️⃣ SSH into EC2 and deploy
-      - name: Deploy on EC2
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: |
-          ssh ubuntu@${{ secrets.SERVER_IP }} bash << EOF
-            aws ecr get-login-password --region ${{ env.AWS_REGION }} | \
-              docker login --username AWS --password-stdin $ECR_REGISTRY
+#       # 9️⃣ SSH into EC2 and deploy
+#       - name: Deploy on EC2
+#         env:
+#           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#         run: |
+#           ssh ubuntu@${{ secrets.SERVER_IP }} bash << EOF
+#             aws ecr get-login-password --region ${{ env.AWS_REGION }} | \
+#               docker login --username AWS --password-stdin $ECR_REGISTRY
 
-            docker pull $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
+#             docker pull $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
 
-            docker stop ${{ env.CONTAINER_NAME }} || true
-            docker rm   ${{ env.CONTAINER_NAME }} || true
+#             docker stop ${{ env.CONTAINER_NAME }} || true
+#             docker rm   ${{ env.CONTAINER_NAME }} || true
 
-            docker run -d \
-              --name ${{ env.CONTAINER_NAME }} \
-              --restart always \
-              -p 80:80 \
-              $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
+#             docker run -d \
+#               --name ${{ env.CONTAINER_NAME }} \
+#               --restart always \
+#               -p 80:80 \
+#               $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
 
-            docker image prune -f
-          EOF
+#             docker image prune -f
+#           EOF
