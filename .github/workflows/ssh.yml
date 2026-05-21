@@ -15,14 +15,17 @@ jobs:
           echo "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      - name: Debug IP
+      - name: Check Port 22
         run: |
-          echo "IP length: ${#SERVER_IP}"
-          echo "IP is: [${{ secrets.SERVER_IP }}]"
+          nc -zv ${{ secrets.SERVER_IP }} 22 || echo "Port 22 is CLOSED or unreachable"
 
       - name: SSH Keyscan
         run: |
-          ssh-keyscan -v -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -p 22 ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts 2>&1 || echo "keyscan failed"
 
       - name: Test SSH Connection
-        run: ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "echo 'Connected '"
+        run: |
+          ssh -v -o StrictHostKeyChecking=no \
+              -i ~/.ssh/id_rsa \
+              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} \
+              "echo 'Connected '"
